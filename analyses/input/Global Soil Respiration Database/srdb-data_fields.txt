@@ -1,0 +1,101 @@
+Field_number,Field_name,Field_definition
+#
+# Record metadata
+#
+1,Record_number,Record number
+2,Entry_date,Entry date in YYYY-MM-DD format
+3,Study_number,Study number; index into the studies database
+4,Author,Name of first author
+5,Duplicate_record,Is record a known duplicate? (Study number)
+6,Quality_flag,"Quality control. Quality control flags include Q0 (default/none), Q01 (estimated from figure), Q02 (data from another study), Q03 (data estimated-other), Q04 (potentially useful future data), Q10 (potential problem with data), Q11 (suspected problem with data), Q12 (known problem with data), Q13 (duplicate?), Q14 (inconsistency). Further details can generally be found in the notes field (#105 below)"
+7,Contributor,Data contributor
+#
+# Site data
+#
+8,Country,Country
+9,Region,State/province/region
+10,Site_name,Name of study site
+11,Site_ID,ID code of study site; in theory Study_number + Site_ID + Study_midyear is unique
+12,Study_midyear,Year study was performed (middle year if multiple years)
+13,YearsOfData,Years of data; always ?1
+14,Latitude,"Latitude, decimal (positive=north, negative=south)"
+15,Longitude,"Longitude, decimal (positive=east, negative=west)"
+16,Elevation,"Elevation, m"
+17,Manipulation,"Manipulation performed (CO2, fertilization, etc.)"
+18,Manipulation_level,Degree of manipulation performed
+19,Age_ecosystem,"Time since ecosystem established, years. This is used when, e.g., the time of conversion of forest to agriculture is known"
+20,Age_disturbance,"Time since disturbance, years"
+21,Species,Dominant species
+22,Biome,"Biome (boreal, temperate, etc). Subjective"
+23,Ecosystem_type,"Ecosystem type (grassland, forest, etc). Subjective"
+24,Ecosystem_state,"Ecosystem state (managed, unmanaged, natural). Subjective. 'Unmanaged' means human management or disturbance in the past, but not currently."
+25,Leaf_habit,"Dominant leaf habit (deciduous, evergreen)"
+26,Stage,"Developmental stage (aggrading, mature). Subjective"
+27,Soil_type,Soil description (classification and texture)
+28,Soil_drainage,"Soil drainage (dry, wet). Subjective. 'Dry' means well-drained uplands; 'wet' peatlands, swamps, etc."
+29,Soil_BD,"Soil bulk density, g cm-3"
+30,Soil_CN,Soil C:N ratio
+31,Soil_sand,Sand ratio value (generally sand+silt+clay = 100 but not always)
+32,Soil_silt,Silt ratio value (generally sand+silt+clay = 100 but not always)
+33,Soil_clay,Clay ratio value (generally sand+silt+clay = 100 but not always)
+34,MAT,"Reported mean annual temperature, deg C"
+35,MAP,"Reported mean annual precipitation, mm"
+36,PET,"Reported potential evapotranspiration, mm"
+37,Study_temp,"Annual temperature in year of study, deg C"
+38,Study_precip,"Annual precipitation in year study of study, mm"
+#
+# Measurement data
+#
+39,Meas_method,CO2 measurement method
+40,Collar_height,"Total height of collar, cm"
+41,Collar_depth,"Depth of collar insertion, cm"
+42,Chamber_area,"Area of measurement chamber, cm2"
+43,Time_of_day,"Time of day measurements were made, form 'XtoY'"
+44,Meas_interval,"Mean interval between Rs measurements, days"
+45,Annual_coverage,"Annual coverage of Rs measurements, fraction (1.0=full year)"
+46,Partition_method,"Method used to partition RS source fluxes, following Bond-Lamberty et al. (2004)"
+#
+# Annual and seasonal RS fluxes
+#
+47,Rs_annual,"Annual C flux from soil respiration, g C m-2. This can either be reported directly by the study, calculated from reported mean fluxes, or estimated from a figure (in which case a quality control note is made, field 6)"
+48,Rs_annual_err,"Error (typically plot-to-plot) for Rs_annual, g C m-2"
+49,Rs_interann_err,"Interannual error reported for Rs_annual, g C m-2. This is occasionally reported by authors, or defined as the standard deviation between year i and year i+1 (N=2)"
+50,Rlitter_annual,"Annual RS flux from litter, g C m-2"
+51,Ra_annual,"Annual autotrophic RS flux, g C m-2"
+52,Rh_annual,"Annual heterotrophic RS flux, g C m-2"
+53,RC_annual,"Root contribution to Rs_annual, annual fraction"
+54,Rs_spring,"Mean spring RS flux, µmol m-2 s-1. Seasons are defined by authors"
+55,Rs_summer,"Mean summer RS flux, µmol m-2 s-1"
+56,Rs_autumn,"Mean autumn RS flux, µmol m-2 s-1"
+57,Rs_winter,"Mean winter RS flux, µmol m-2 s-1"
+58,Rs_growingseason,"Mean growing RS flux, µmol m-2 s-1"
+59,Rs_wet,"Mean wet season RS flux, µmol m-2 s-1 "
+60,Rs_dry,"Mean dry season RS flux, µmol m-2 s-1"
+61,RC_seasonal,"Root contribution to seasonal RS, fraction"
+62,RC_season,Season of RC_seasonal
+#
+# Ancillary pools and fluxes
+#
+63,GPP,"Annual gross primary production at site, g C m-2"
+64,ER,"Annual ecosystem respiration at site, g C m-2"
+65,NEP,"Annual net ecosystem production at site, g C m-2"
+66,NPP,"Annual net primary production at site, g C m-2"
+67,ANPP,"Annual aboveground NPP at site, g C m-2"
+68,BNPP,"Annual belowground NPP at site, g C m-2"
+69,NPP_FR,"Annual fine root NPP at site, g C m-2"
+70,TBCA,"Total belowground carbon allocation at site, g C m-2"
+71,Litter_flux,"Annual aboveground litter flux, g C m-2. This is reported very inconsistently (leaf only, leaf and fine woody material, all material, etc). Generally this should not include large woody material"
+72,Rootlitter_flux,"Annual belowground litter flux, g C m-2"
+73,TotDet_flux,"Annual total litter flux, g C m-2. This should be the sum of Litter_flux and Rootlitter_flux"
+74,Ndep,"Annual nitrogen deposition, g N m-2"
+75,LAI,"Leaf area index at site, m2 m-2. Hemispheric (one-sided) if possible"
+76,BA,"Basal area at site, m2 ha-1 "
+77,C_veg_total,"Total carbon in vegetation, g C m-2. This should be the sum of C_AG and C_BG. For this and all 'C_' fields, biomass is converted to carbon using a ratio of 0.5 unless study-specific values are available"
+78,C_AG,"Total carbon in aboveground vegetation, g C m-2"
+79,C_BG,"Total carbon in belowground vegetation, g C m-2"
+80,C_CR,"Total carbon in coarse roots, g C m-2"
+81,C_FR,"Total carbon in fine roots, g C m-2"
+82,C_litter,"Total carbon in standing litter, g C m-2"
+83,C_soilmineral,"Total carbon in soil organic matter, g C m-2"
+84,C_soildepth,"Depth to which soil C recorded, cm"
+85,Notes,Notes
