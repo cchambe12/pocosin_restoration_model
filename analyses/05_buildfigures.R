@@ -84,17 +84,29 @@ angola <- read.csv("output/carbonestimates_angolabay_2008.csv") %>%
   rbind(read.csv("output/carbonestimates_angolabay_2023.csv") %>%
           mutate(year = 2023, name = "Angola Bay"))
 
+plnwr_3 <- read.csv("output/carbonestimates_plnwr_3_2008.csv") %>%
+  mutate(year = 2008, name = "PLNWR Area 3") %>%
+  rbind(read.csv("output/carbonestimates_plnwr_3_2012.csv") %>%
+          mutate(year = 2012, name = "PLNWR Area 3")) %>%
+  rbind(read.csv("output/carbonestimates_plnwr_3_2016.csv") %>%
+          mutate(year = 2016, name = "PLNWR Area 3")) %>%
+  rbind(read.csv("output/carbonestimates_plnwr_3_2020.csv") %>%
+          mutate(year = 2020, name = "PLNWR Area 3")) %>%
+  rbind(read.csv("output/carbonestimates_plnwr_3_2023.csv") %>%
+          mutate(year = 2023, name = "PLNWR Area 3"))
+
 
 
 ##### Bring them all together
-all <- bind_rows(list(van, hofmann, holly, angola)) %>%
+all <- bind_rows(list(van, hofmann, holly, angola, plnwr_3)) %>%
   filter(!model %in% c("Simple WTD\n(Bayesian - Swails Comparison)",
                        "Original model - WTD only")) %>%
   mutate(name = case_when(
            name == "Van Swamp" ~ "Site VS",
            name == "Hofmann Forest" ~ "Site HF",
            name == "Holly Shelter" ~ "Site HS",
-           name == "Angola Bay" ~ "Site AB"))
+           name == "Angola Bay" ~ "Site AB",
+           name == "PLNWR Area 3" ~ "Site P3"))
 
 annual.p <- ggplot(all, aes(x = year, y = estimate, col = ratio)) + #, linetype = model
   geom_point() + geom_line() + theme_bw() +
@@ -209,11 +221,13 @@ dev.off()
 
 ##### Look at total over time
 sf <- st_read("../../data/North Carolina/NC_Pocosin_Restoration_Sites_2026/") %>%
+  mutate(Proj_Name = ifelse(Label == "Hydrologic Restoration Area 3", Label, Proj_Name)) %>%
   mutate(name = case_when(
     Proj_Name == "Van Swamp Restoration" ~ "Site VS",
     Proj_Name == "Hofmann Forest Pocosin Rewetting" ~ "Site HF",
     Proj_Name == "Holly Shelter Pocosin" ~ "Site HS",
-    Proj_Name == "Angola Bay Restoration Area" ~ "Site AB"),
+    Proj_Name == "Angola Bay Restoration Area" ~ "Site AB",
+    Proj_Name == "Hydrologic Restoration Area 3" ~ "Site P3"),
     acres = as.vector(st_area(geometry) * 0.000247105))
 
 grouped <- left_join(all, sf %>% select(name, acres) %>% st_drop_geometry) %>%
@@ -300,14 +314,21 @@ hs <- read.csv("output/clean_hollyshelter_2008_restored.csv") %>% mutate(year = 
   full_join(read.csv("output/clean_hollyshelter_2020_restored.csv") %>% mutate(year = 2020)) %>%
   full_join(read.csv("output/clean_hollyshelter_2023_restored.csv") %>% mutate(year = 2023))
 
+p3 <- read.csv("output/clean_plnwr_3_2008_restored.csv") %>% mutate(year = 2008) %>%
+  full_join(read.csv("output/clean_plnwr_3_2012_restored.csv") %>% mutate(year = 2012)) %>%
+  full_join(read.csv("output/clean_plnwr_3_2016_restored.csv") %>% mutate(year = 2016)) %>%
+  full_join(read.csv("output/clean_plnwr_3_2020_restored.csv") %>% mutate(year = 2020)) %>%
+  full_join(read.csv("output/clean_plnwr_3_2023_restored.csv") %>% mutate(year = 2023))
+
 
 ##### Bring them all together
-all_preds <- bind_rows(list(vs, hf, hs, ab)) %>%
+all_preds <- bind_rows(list(vs, hf, hs, ab, p3)) %>%
   mutate(site = case_when(
     site == "Van Swamp" ~ "Site VS",
     site == "Hofmann Forest" ~ "Site HF",
     site == "Holly Shelter" ~ "Site HS",
-    site == "Angola Bay" ~ "Site AB")
+    site == "Angola Bay" ~ "Site AB",
+    site == "PLNWR Area 3" ~ "Site P3")
   )
 
 #### Visualize predictor variability across sites and years
@@ -358,7 +379,8 @@ clim.p <- ggplot(climatic_variability %>% group_by(site, year, predictor) %>%
     values = c("Site VS" = "#332288",
                "Site HF" = "#E66101",
                "Site HS" = "#1B9E77",
-               "Site AB" = "#B35806")) +
+               "Site AB" = "#B35806",
+               "Site P3" = "#E8A838")) +
   labs(title = "Climatic variability across sites and years", x = "", y = "Value",
     color = "Site") +
   theme_bw() +
@@ -380,7 +402,8 @@ aes(x = factor(year), y = value, col = site, group = site)) +
     values = c("Site VS" = "#332288",
                "Site HF" = "#E66101",
                "Site HS" = "#1B9E77",
-               "Site AB" = "#B35806")) +
+               "Site AB" = "#B35806",
+               "Site P3" = "#E8A838")) +
   labs(title = "Vegetative variability across sites", x = "", y = "Value",
     color = "Site") +
   theme_bw() +
@@ -401,7 +424,8 @@ geo.p <- ggplot(geographic_variability %>% group_by(site, predictor) %>%
     values = c("Site VS" = "#332288",
                "Site HF" = "#E66101",
                "Site HS" = "#1B9E77",
-               "Site AB" = "#B35806")) +
+               "Site AB" = "#B35806",
+               "Site P3" = "#E8A838")) +
   labs(title = "Geographic variability across sites", x = "", y = "Value", color = "Site") +
   theme_bw() +
   theme(plot.title = element_text(size = 11, face = "bold"),
@@ -508,7 +532,7 @@ sigma_data <- bind_rows(
 ) %>%
   group_by(model) %>%
   summarise(
-    estimate = median(sigma),
+    estimate = round(median(sigma), digits =2),
     conf.low = quantile(sigma, 0.055),  # (1 - 0.89) / 2
     conf.high = quantile(sigma, 0.945),
     .groups = "drop"
@@ -532,13 +556,33 @@ sigma.p <- sigma_data %>%
     panel.grid.major.y = element_blank())
 
 
+# In-sample: R-squared
+r2_data <- bind_rows(r2_full %>% as.data.frame() %>% 
+    mutate(Model = "Updated model", Estimate = round(Estimate, 2)),
+  r2_simple %>% as.data.frame() %>%
+    mutate(Model = "Baseline model", Estimate = round(Estimate, 2)))
+
+r2.p <- r2_data %>%
+  ggplot(aes(x = Estimate, y = reorder(Model, Estimate, decreasing = TRUE))) +
+  geom_col(fill = "#6B4C9A", width = 0.6, alpha = 0.8) +
+  geom_text(aes(label = Estimate),
+            hjust = -0.1, size = 3.5, color = "gray30") +
+  labs(title = "c) Model Comparison - R²",
+       x = "Bayes R²",
+       y = NULL) +
+  scale_x_continuous(limits = c(0, max(r2_data$Estimate) * 1.15)) +
+  theme_bw() +
+  theme(plot.title = element_text(size = 11, face = "bold"),
+        axis.text.y = element_text(size = 9),
+        panel.grid.major.y = element_blank())
+
+
 ### Save combined figure
-combined.p <- slopes.p / sigma.p +
+combined.p <- slopes.p / (sigma.p | r2.p) +
   plot_layout(heights = c(3, 1)) +
   plot_annotation(
     title = "Soil Respiration Model Results",
-    theme = theme(plot.title = element_text(size = 12, face = "bold"))
-  )
+    theme = theme(plot.title = element_text(size = 12, face = "bold")))
 
 png(paste0("figures/modeloutputs_combined.png"), 
     width = 8, height = 9, units = "in", res = 350)
@@ -547,9 +591,11 @@ dev.off()
 
 #### Build a map of all the sites evaluated
 sf <- st_read("../../data/North Carolina/NC_Pocosin_Restoration_Sites_2026/") %>%
+  mutate(Proj_Name = ifelse(Label == "Hydrologic Restoration Area 3", Label, Proj_Name)) %>%
   filter(Proj_Name %in% c("Van Swamp Restoration", "Hofmann Forest Pocosin Rewetting",
-                          "Holly Shelter Pocosin", "Angola Bay Restoration Area")) %>%
-  mutate(tag = c("Site AB", "Site HF", "Site VS", "Site HS"))
+                          "Holly Shelter Pocosin", "Angola Bay Restoration Area",
+                          "Hydrologic Restoration Area 3")) %>%
+  mutate(tag = c("Site AB", "Site HF", "Site VS", "Site HS", "Site P3"))
 
 
 statenc = tigris::states() %>%
@@ -574,7 +620,8 @@ main_map <- ggplot() +
     values = c("Site VS" = "#332288",
                "Site HF" = "#E66101",
                "Site HS" = "#1B9E77",
-               "Site AB" = "#B35806"), 
+               "Site AB" = "#B35806",
+               "Site P3" = "#E8A838"), 
     name = "") +
   labs(title = "Test site locations in North Carolina, USA") +
   theme_bw() +
@@ -592,7 +639,8 @@ inset_map <- ggplot() +
     values = c("Site VS" = "#332288",
                "Site HF" = "#E66101",
                "Site HS" = "#1B9E77",
-               "Site AB" = "#B35806"), 
+               "Site AB" = "#B35806",
+               "Site P3" = "#E8A838"), 
     name = "") +
   theme_void() +
   theme(panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),

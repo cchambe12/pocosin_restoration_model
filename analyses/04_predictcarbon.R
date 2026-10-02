@@ -23,7 +23,8 @@ library(brms)
 setwd("~/Documents/git/tnc_cprg/analyses/peatlands/")
 
 #### Load in Shapefile
-sf <- st_read("../../data/North Carolina/NC_Pocosin_Restoration_Sites_2026/")
+sf <- st_read("../../data/North Carolina/NC_Pocosin_Restoration_Sites_2026/") %>%
+  mutate(Proj_Name = ifelse(Label == "Hydrologic Restoration Area 3", Label, Proj_Name))
 
 ## Load in full dataset to get z values
 cleandat <- read.csv("output/clean_swails.csv")
@@ -35,10 +36,11 @@ load("models/soilresp.simple.wtd.Rdata")
 
 # Define the sites with their names, filenames, and filter criteria
 sites <- list(
-  list(name = "Van Swamp", filename = "vanswamp", proj_name = "Van Swamp Restoration"),
-  list(name = "Hofmann Forest", filename = "hofmannforest", proj_name = "Hofmann Forest Pocosin Rewetting"),
-  list(name = "Holly Shelter", filename = "hollyshelter", proj_name = "Holly Shelter Pocosin"),
-  list(name = "Angola Bay", filename = "angolabay", proj_name = "Angola Bay Restoration Area")
+  #list(name = "Van Swamp", filename = "vanswamp", proj_name = "Van Swamp Restoration"),
+  #list(name = "Hofmann Forest", filename = "hofmannforest", proj_name = "Hofmann Forest Pocosin Rewetting"),
+  #list(name = "Holly Shelter", filename = "hollyshelter", proj_name = "Holly Shelter Pocosin"),
+  #list(name = "Angola Bay", filename = "angolabay", proj_name = "Angola Bay Restoration Area"),
+  list(name = "PLNWR Area 3", filename = "plnwr_3", proj_name = "Hydrologic Restoration Area 3")
 )
 
 # Define the years
